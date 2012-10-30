@@ -1,4 +1,21 @@
-# Defines exceptions for our game
+"""-------------------------------------------------
+Satay Game Engine Copyright (C) 2012 Andy Brennan
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR APARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ACTIONOF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
+OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+Satay on GitHub: https://github.com/Valdez42/Satay
+
+ Exceptions.py --
+   Defines all exceptions for Satay.
+-------------------------------------------------"""
 
 class SettingsError(Exception):
     """Error in game settings"""

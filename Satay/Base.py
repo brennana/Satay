@@ -1,10 +1,20 @@
 """-------------------------------------------------
-Satay Game Engine (C) 2012 Andy J. Brennan
-All Rights Reserved.
+Satay Game Engine Copyright (C) 2012 Andy Brennan
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR APARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ACTIONOF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
+OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+Satay on GitHub: https://github.com/Valdez42/Satay
 
  Base.py --
-   Contains all the basic classes that
-   make up the scripting portion of the engine.
+   Contains all the basic classes that make up Satay.
 -------------------------------------------------"""
 
 from Exceptions import *
@@ -51,7 +61,7 @@ class Command(object):
     TypeMsg           = "You cannot do that."
     PropertyMsg       = "You cannot do that."
     ScopeMsg          = "Object is nowhere to be found."
-    
+
 class Property(object):
     """Class to hold attr name and value, used for defining module properties
         and for shorthand value retreival."""
@@ -74,6 +84,7 @@ class Property(object):
         return self[attr]
 
 class EntBase(object):
+    """Entity base class. Objects such as Maps and Items derive from this."""
     def __init__(self, **props):
         self.__props__ = {}
         if "name" not in props or "desc" not in props:
@@ -95,6 +106,9 @@ class EntBase(object):
         return self.name()
 
 class NumeratedList(object):
+    """A type of list that acts as a dictionary.
+        It stores any type key, and an integer value representing how many of
+        'key' are in the "list"."""
     def __init__(self, **items):
         for v in items.values():
             if type(v) != int:
