@@ -85,7 +85,8 @@ class Property(object):
 
 class EntBase(object):
     """Entity base class. Objects such as Maps and Items derive from this."""
-    def __init__(self, **props):
+    def __init__(self, ID, **props):
+        self.ID = ID
         self.__props__ = {}
         if "name" not in props or "desc" not in props:
             raise EntityError("Name and/or description not defined!")
@@ -103,12 +104,12 @@ class EntBase(object):
     def __repr__(self):
         return self.name()
     def __str__(self):
-        return self.name()
+        return self.ID()
 
 class NumeratedList(object):
     """A type of list that acts as a dictionary.
         It stores any type key, and an integer value representing how many of
-        'key' are in the "list"."""
+        'key' are in the NumeratedList. Value of -1 or less denotes infinate members."""
     def __init__(self, **items):
         for v in items.values():
             if type(v) != int:
@@ -116,11 +117,24 @@ class NumeratedList(object):
         self.items = items
     def __getitem__(self, item):
         return self.items[item]
+    def __contains__(self, item):
+        return item in self.items
     def __repr__(self):
         return self.items.__repr__()
     def __str__(self):
         return self.items.__str__()
-    def DecElem(self, item):
-        self.items[item] -= 1
-    def IncElem(self, item):
-        self.items[item] += 1
+    def Give(self, item, amt=1):
+        if item not in self.items:
+            self.items[item] = amt
+        elif self.items[item] <= -1:
+            pass
+        else:
+            self.items[item] += amt
+    def Take(self, item, amt=1):
+        if self.items[item] <= -1:
+            pass
+        elif (self.items[item] - amt) < 0:
+            raise NumeratedListError("Cannot take "+str(amt)+" more of that!")
+        else:
+            self.items[item] -= amt
+        return self.items[item]

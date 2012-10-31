@@ -41,12 +41,12 @@ def PReplace(item1, item2):
     global inventory
     global __objects__
     if item1 in inventory:
-        inventory.pop(item1)
-        inventory[item2.id] = item2
+        inventory.Take(item1)
+        inventory.Give(item2)
     elif item1 in __objects__[curmap].itemlist():
         print "here"
-        __objects__[curmap].itemlist().remove(item1.id)
-        __objects__[curmap].itemlist().append(item2)
+        __objects__[curmap].itemlist().Take(item1)
+        __objects__[curmap].itemlist().Give(item2)
 
 
 def PChgMap(newmap):
@@ -127,7 +127,6 @@ def __resolve__(args):
     nouns = {k:(v.nbase(),v.descriptors()) for k,v in __objects__.items()}
     for arg in args[1:]:
         if arg in [t[0] for t in nouns.values()]:
-            #print "main hit"
             candidates = {}
             #Found a noun! Now backtrack and examine adjectives to the last noun/command
             # and compare against adjectives in each possible nouns
@@ -147,17 +146,13 @@ def __resolve__(args):
             # Ambiguity in user's described noun
             if amts.count(amts[0]) > 1:
                 raise AmbiguityError("Which one are you talking about?")
-            #print amts, args, usradj, candidates, nouns, adjp
-            #print args[adjp:len(usradj)+2+adjp]
             args[adjp+1:len(usradj)+adjp+2] = [__objects__[candidates[amts[0]]]]
             print args
             adjp += 1
 
         elif arg in sum([tup[1] for tup in nouns.values()],[]):
-            #print "adjective"
             usradj.append(arg)
         else:
-            #print "else hit"
             usradj = []
             adjp += 1
     return args
@@ -169,15 +164,16 @@ def __setids__(objs):
         newObjs[objID] = obj
     return newObjs
 
-
 def CheckScope(ent):
+    """Check if a entity is in the current scope (curmap or inventory)"""
     return ent.id in inventory or ent.id in __objects__[curmap].itemlist()
 
-# Map and Item classes
 class Map(EntBase):
+    """Class representing map entity (places the player and items inhabit)"""
     pass
 
 class Item(EntBase):
+    """Class representing item entity (things the player interacts with)"""
     pass
 
 def RegisterCommands(*args):

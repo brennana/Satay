@@ -33,6 +33,10 @@ class AmbiguityError(Exception):
     """Error resolving noun"""
     pass
 
+class NumeratedListError(Exception):
+    """Error accessing objects in a numerated list"""
+    pass
+
 class CommandError(Exception):
     """Error executing command"""
     pass
