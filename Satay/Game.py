@@ -40,6 +40,7 @@ def PReplace(item1, item2):
     """Replace item1 with item2."""
     global inventory
     global __objects__
+    global curmap
     if item1 in inventory:
         inventory.Take(item1)
         inventory.Give(item2)
@@ -56,11 +57,13 @@ def PChgMap(newmap):
 
 def PRemoveFromMap(item):
     """Remove 1 of 'item' from the current map."""
-    PorkPy.removefm(item)
+    global __objects__
+    global curmap
+    __objects__[curmap].itemlist().Take(item)
 
 def PAddToInventory(item):
     """Add 1 of 'item' to the inventory."""
-    PorkPy.addtoinv(item)
+    pass
 
 
 # Main input loop for game
@@ -177,11 +180,12 @@ class Item(EntBase):
     pass
 
 def RegisterCommands(*args):
+    """Register commands with the game."""
     global __commands__
     __commands__ += args
 
-# Start the game
 def Initialize():
+    """Start the game."""
     if "title" not in settings:
         settings["title"] = "Untitled"
     if "author" not in settings:

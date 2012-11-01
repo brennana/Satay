@@ -13,13 +13,13 @@ class kill(Command):
             PReplace(item1, item1.kill_newitem())
         else:
             self.ThrowScope()
-        
+
     def form2(self, item1, cWith, item2):
         if cWith not in ['with','using']:
             self.ThrowConjunction()
         PPrint(item1.kill_msg(item2))
         PReplace(item1, item1.kill_newitem(item2))
-        
+
     funclist = [form1,form2]
     NoSuitableFormMsg = "No function found for args given!"
     ConjunctionMsg     = "Learn to English, my friend."
