@@ -7,7 +7,7 @@ LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
 FOR APARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
 SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
 ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-ACTIONOF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
+ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
 OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
@@ -124,7 +124,6 @@ class NumeratedListIter(object):
         else:
             return self.keys[self.cur]
 
-
 class NumeratedList(dict):
     """A type of dictionary that acts as a list.
         It stores any type key, and an integer type value representing how
@@ -147,3 +146,8 @@ class NumeratedList(dict):
         else:
             self[item] -= amt
         return self[item]
+
+class EntRef(str):
+    """A string-deriving reference for entities (maps, items, etc)"""
+    def __init__(self, string):
+        super(EntRef, self).__init__(string)
