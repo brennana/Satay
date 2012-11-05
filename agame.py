@@ -55,6 +55,7 @@ settings = {
     "author":"Andy Brennan",
     "items":NumeratedList(
         iTem=3,
+        iSword=1,
     ),
     "objects":objects,
     "commands":[kill, murder],

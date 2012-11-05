@@ -136,6 +136,11 @@ class NumeratedList(dict):
         super(NumeratedList, self).__init__(items)
     def __iter__(self):
         return NumeratedListIter(self)
+    def __contains__(self, obj):
+        if super(NumeratedList, self).__contains__(obj):
+            return self[obj] > 0
+        else:
+            return False
     def Give(self, item, amt=1):
         if item not in self:
             self[item] = amt
@@ -158,12 +163,25 @@ class FunctionContainer(object):
     def __init__(self):
         super(FunctionContainer, self).__init__()
 
-    def __resolve__(self, *args):
+    def __toent__(self, *args):
         """Resolve EntRefs into the actual entity"""
         newargs = []
         for arg in args:
             if isinstance(arg, EntRef):
                 newargs.append(self.game.__objects__[arg])
+            else:
+                newargs.append(arg)
+        if len(newargs) > 1:
+            return newargs
+        else:
+            return newargs[0]
+
+    def __toref__(self, *args):
+        """Convert entites into EntRefs."""
+        newargs = []
+        for arg in args:
+            if isinstance(arg, EntBase):
+                newargs.append(EntRef(arg.id))
             else:
                 newargs.append(arg)
         if len(newargs) > 1:

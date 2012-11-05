@@ -1,6 +1,6 @@
 # Lil' test command script
 from Satay.Base import Command
-from Satay.BaseGame.Game import Map, Item
+from Satay.BaseGame.Game import Item
 from Satay.Exceptions import *
 
 # Create commands
@@ -15,10 +15,16 @@ class kill(Command):
             self.ThrowScope()
 
     def form2(self, item1, cWith, item2):
+        self.ExpectType(item1, Item)
+        self.ExpectType(item2, Item)
+        self.ExpectProperty(item1, ["kill_msg", "kill_newitem"])
         if cWith not in ['with','using']:
             self.ThrowConjunction()
-        self.game.Print(item1.kill_msg(item2))
-        self.game.Replace(item1, item1.kill_newitem(item2))
+        if self.game.CheckScope(item1, item2):
+            self.game.Print(item1.kill_msg(item2))
+            self.game.Replace(item1, item1.kill_newitem(item2))
+        else:
+            self.ThrowScope()
 
     funclist = [form1,form2]
     NoSuitableFormMsg = "No function found for args given!"

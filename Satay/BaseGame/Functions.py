@@ -14,13 +14,12 @@ OTHER DEALINGS IN THE SOFTWARE.
 Satay on GitHub: https://github.com/Valdez42/Satay
 
  Functions.py --
-   Dervives the FunctionContainer class from base
+   Derives the FunctionContainer class from base
    with standard Satay functions. This class is
    instanced in Game.py.
 -------------------------------------------------"""
 
 from ..Base import FunctionContainer
-from ..Base import EntRef
 
 class BaseGameFuncs(FunctionContainer):
     """The function container for Satay functions."""
@@ -30,7 +29,7 @@ class BaseGameFuncs(FunctionContainer):
 
     def Replace(self, item1, item2):
         """Replace item1 with item2."""
-        item1,item2 = self.__resolve__(item1,item2)
+        item1,item2 = self.__toref__(item1,item2)
         if item1 in self.game.inventory:
             self.game.inventory.Take(item1)
             self.game.inventory.Give(item2)
@@ -44,10 +43,10 @@ class BaseGameFuncs(FunctionContainer):
 
     def RemoveFromMap(self, item):
         """Remove 1 of 'item' from the current map."""
-        item = self.__resolve__(item)
+        item = self.__toref__(item)
         self.game.__objects__[self.game.curmap].itemlist().Take(item)
 
     def AddToInventory(self, item):
         """Add 1 of 'item' to the inventory."""
-        item = self.__resolve__(item)
+        item = self.__toref__(item)
         self.game.inventory.Give(item)

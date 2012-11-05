@@ -70,6 +70,6 @@ class BaseGame(object):
     def GetCurmap(self):
         return self.__objects__[self.curmap]
 
-    def CheckScope(self, ent):
+    def CheckScope(self, *ents):
         """Check if a entity is in the current scope (curmap or inventory)"""
-        return ent.id in self.inventory or ent.id in self.GetCurmap().itemlist()
+        return all([a.id in self.inventory or a.id in self.GetCurmap().itemlist() for a in ents])
