@@ -1,5 +1,5 @@
 """-------------------------------------------------
-Satay Game Engine Copyright (C) 2012 Andy J. Brennan
+Satay Game Engine Copyright (C) 2012 Andy Brennan
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
 ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
@@ -13,7 +13,19 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 Satay on GitHub: https://github.com/Valdez42/Satay
 
- __init__.py --
-   The Satay package contains all elements of the
-   Satay game engine.
+ Functions.py --
+   Dervives the FunctionContainer class from base
+   with standard Satay functions. This class is
+   instanced in Game.py.
 -------------------------------------------------"""
+
+from ..BaseGame import Functions
+
+class TextGameFuncs(Functions.BaseGameFuncs):
+    """The function container for Satay functions."""
+    def __init__(self, game):
+        super(TextGameFuncs, self).__init__(game)
+
+    def Print(self, message):
+        """Print a Message to Game Screen."""
+        print(message)

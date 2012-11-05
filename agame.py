@@ -1,10 +1,7 @@
 # A test game
-from Satay import Game
-from Satay.Game import Map, Item
+from Satay.TextGame.Game import Map, Item, TextGame
 from Satay.Base import NumeratedList
 from Commands.kill import kill, murder
-
-Game.RegisterCommands(kill, murder)
 
 objects = {
     "mPuddle":Map(
@@ -52,7 +49,7 @@ objects = {
     ),
 }
 
-Game.settings = {
+settings = {
     "start":"mPuddle",
     "title":"A Game",
     "author":"Andy Brennan",
@@ -60,8 +57,10 @@ Game.settings = {
         iTem=3,
     ),
     "objects":objects,
+    "commands":[kill, murder],
 }
 
 # Start game immediately
 if __name__ == "__main__":
-    Game.Initialize()
+    aGame = TextGame(settings)
+    aGame.Run()

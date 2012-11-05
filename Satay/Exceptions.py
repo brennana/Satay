@@ -4,7 +4,7 @@ Satay Game Engine Copyright (C) 2012 Andy Brennan
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
 ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
 LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR APARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
 SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
 ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
 ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
@@ -16,6 +16,10 @@ Satay on GitHub: https://github.com/Valdez42/Satay
  Exceptions.py --
    Defines all exceptions for Satay.
 -------------------------------------------------"""
+
+class StopGame(Exception):
+    """Exception thrown when game must be stopped in .Run()"""
+    pass
 
 class SettingsError(Exception):
     """Error in game settings"""

@@ -14,6 +14,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 Satay on GitHub: https://github.com/Valdez42/Satay
 
  __init__.py --
-   The Satay package contains all elements of the
-   Satay game engine.
+   The Satay.TextGame package defines a text-based
+   game.
 -------------------------------------------------"""

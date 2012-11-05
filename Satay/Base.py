@@ -4,7 +4,7 @@ Satay Game Engine Copyright (C) 2012 Andy Brennan
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
 ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
 LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR APARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
 SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
 ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
 ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
@@ -21,7 +21,8 @@ from Exceptions import *
 
 class Command(object):
     """Base Command Class -- All commands derive from here."""
-    def __init__(self, args):
+    def __init__(self, game, args):
+        self.game = game
         self.__defer__(*args)
     def __defer__(self, *args):
         """Defer arguments to each function until a suitable match is found"""
@@ -148,6 +149,25 @@ class NumeratedList(dict):
         return self[item]
 
 class EntRef(str):
-    """A string-deriving reference for entities (maps, items, etc)"""
+    """A string-deriving reference for entities (maps, items, etc.)"""
     def __init__(self, string):
         super(EntRef, self).__init__(string)
+
+class FunctionContainer(object):
+    """Class for containing and calling Satay functions (Print, Replace, etc.)"""
+    def __init__(self):
+        super(FunctionContainer, self).__init__()
+
+    def __resolve__(self, *args):
+        """Resolve EntRefs into the actual entity"""
+        newargs = []
+        for arg in args:
+            if isinstance(arg, EntRef):
+                newargs.append(self.game.__objects__[arg])
+            else:
+                newargs.append(arg)
+        if len(newargs) > 1:
+            return newargs
+        else:
+            return newargs[0]
+
