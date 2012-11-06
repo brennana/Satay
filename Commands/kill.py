@@ -7,7 +7,7 @@ from Satay.Exceptions import *
 class kill(Command):
     def form1(self, item1):
         self.ExpectType(item1, Item)
-        self.ExpectProperty(item1, ['kill_msg','kill_newitem'])
+        self.ExpectProperty(item1, 'kill_msg','kill_newitem')
         if self.game.CheckScope(item1):
             self.game.Print(item1.kill_msg())
             self.game.Replace(item1, item1.kill_newitem())
@@ -17,7 +17,7 @@ class kill(Command):
     def form2(self, item1, cWith, item2):
         self.ExpectType(item1, Item)
         self.ExpectType(item2, Item)
-        self.ExpectProperty(item1, ["kill_msg", "kill_newitem"])
+        self.ExpectProperty(item1, "kill_msg", "kill_newitem")
         if cWith not in ['with','using']:
             self.ThrowConjunction()
         if self.game.CheckScope(item1, item2):

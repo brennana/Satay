@@ -47,12 +47,10 @@ class Command(object):
         raise CommandPropertyError(self.PropertyMsg+'\n'+hint)
     def ThrowScope(self, hint=''):
         raise CommandScopeError(self.ScopeMsg+'\n'+hint)
-    def ExpectType(self, obj, cls):
-        if not isinstance(obj, cls):
+    def ExpectType(self, obj, *clses):
+        if not any([isinstance(obj, cls) for cls in clses]):
             self.ThrowType()
-    def ExpectProperty(self, obj, props):
-        if type(props) != list:
-            props = list(props)
+    def ExpectProperty(self, obj, *props):
         for prop in props:
             if prop not in obj:
                 self.ThrowProperty()

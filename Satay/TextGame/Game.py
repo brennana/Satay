@@ -44,8 +44,6 @@ class TextGame(BaseGame.BaseGame):
     def __mainloop__(self):
         """Represents one cycle for the game."""
         #Print the current map's name and desc.
-        self.Print(self.GetCurmap().name())
-        self.Print(self.GetCurmap().desc())
         cmd = raw_input("> ")
         # User desires to quit the game
         if cmd == 'quit':
@@ -68,7 +66,7 @@ class TextGame(BaseGame.BaseGame):
                 called = True
                 break
             else:
-                return
+                continue
         if not called:
             self.Print("Hmm?")
         super(TextGame, self).__mainloop__()
@@ -125,7 +123,6 @@ class TextGame(BaseGame.BaseGame):
                 if amts.count(amts[0]) > 1:
                     raise AmbiguityError("Which one are you talking about?")
                 args[adjp+1:len(usradj)+adjp+2] = [self.__objects__[candidates[amts[0]]]]
-                print args
                 adjp += 1
 
             elif arg in sum([tup[1] for tup in nouns.values()],[]):
@@ -137,8 +134,11 @@ class TextGame(BaseGame.BaseGame):
 
     def Run(self):
         """Run the game."""
-        # Print title and author of game, then go into loop
+        # Print title and author of game as well
+        # as specifics for start map, then go into loop
         self.Print(self.title + " by " + self.author)
+        self.Print(self.GetCurmap().name())
+        self.Print(self.GetCurmap().desc())
         while 1:
             try:
                 self.__mainloop__()

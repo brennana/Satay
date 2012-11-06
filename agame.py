@@ -2,6 +2,7 @@
 from Satay.TextGame.Game import Map, Item, TextGame
 from Satay.Base import NumeratedList
 from Commands.kill import kill, murder
+from Commands.basic import look, go, get, take, drop
 
 objects = {
     "mPuddle":Map(
@@ -13,6 +14,7 @@ objects = {
             iTem=3,
             iStone=2,
         ),
+        s="mHeree",
     ),
 
     "mHeree":Map(
@@ -20,6 +22,7 @@ objects = {
         desc="At the Wall.",
         nbase="heree",
         descriptors=[],
+        n="mPuddle",
     ),
 
     "iTem":Item(
@@ -58,7 +61,7 @@ settings = {
         iSword=1,
     ),
     "objects":objects,
-    "commands":[kill, murder],
+    "commands":[kill, murder, look, go, get, take, drop],
 }
 
 # Start game immediately

@@ -50,7 +50,6 @@ class BaseGame(object):
         self.author = settings["author"]
         self.__objects__ =  self.__setids__(settings["objects"])
         self.curmap = settings['start']
-        # Watch out for this line:
         self.caller = funcCls(self)
         super(BaseGame, self).__init__()
 
@@ -73,3 +72,11 @@ class BaseGame(object):
     def CheckScope(self, *ents):
         """Check if a entity is in the current scope (curmap or inventory)"""
         return all([a.id in self.inventory or a.id in self.GetCurmap().itemlist() for a in ents])
+
+    def CheckMapScope(self, *ents):
+        """Check if entities are in the curmap scope."""
+        return all([a.id in self.GetCurmap().itemlist() for a in ents])
+
+    def CheckInvScope(self, *ents):
+        """Check if entities are in the inventory scope."""
+        return all([a.id in self.inventory for a in ents])

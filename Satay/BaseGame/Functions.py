@@ -39,12 +39,23 @@ class BaseGameFuncs(FunctionContainer):
 
     def ChgMap(self, newmap):
         """Change the current game map to newmap."""
+        newmap = self.__toref__(newmap)
         self.game.curmap = newmap
 
     def RemoveFromMap(self, item):
         """Remove 1 of 'item' from the current map."""
         item = self.__toref__(item)
         self.game.__objects__[self.game.curmap].itemlist().Take(item)
+
+    def AddToMap(self, item):
+        """Add 1 of 'item' to the current map."""
+        item = self.__toref__(item)
+        self.game.__objects__[self.game.curmap].itemlist().Give(item)
+
+    def RemoveFromInventory(self, item):
+        """Remove 1 of 'item' from the inventory."""
+        item = self.__toref__(item)
+        self.game.inventory.Take(item)
 
     def AddToInventory(self, item):
         """Add 1 of 'item' to the inventory."""
