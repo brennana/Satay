@@ -22,14 +22,21 @@ Satay on GitHub: https://github.com/Valdez42/Satay
 from ..Base import *
 from ..Exceptions import *
 from Functions import *
+import cPickle
 
 class Map(EntBase):
     """Class representing map entity (places the player and items inhabit)"""
-    pass
+    def __init__(self, **props):
+        if "itemlist" not in props:
+            raise EntityError("Missing itemlist in map!")
+        super(Map, self).__init__(**props)
+
 
 class Item(EntBase):
     """Class representing item entity (things the player interacts with)"""
-    pass
+    def __init__(self, **props):
+        super(Item, self).__init__(**props)
+
 
 class BaseGame(object):
     """Base class for any kind of game."""
@@ -66,11 +73,59 @@ class BaseGame(object):
             newObjs[EntRef(objID)] = obj
         return newObjs
 
+    def __lOpen__(self, fname):
+        """Unpickle loaddata from fname as file."""
+        try:
+            f = open(fname, 'r')
+        except IOError:
+            raise LoadGameError("Could not open file!")
+        else:
+            loaddata = cPickle.load(f)
+        finally:
+            f.close()
+        return loaddata
+
+    def __sOpen__(self, fname, savedata):
+        """Open fname as file and pickle savedata."""
+        try:
+            f = open(fname, 'w')
+        except IOError:
+            raise SaveGameError("Could not create save file!")
+        else:
+            # Dump with protocol 2 (for efficiency)
+            cPickle.dump(savedata, f)
+        finally:
+            f.close()
+
+    def Save(self, fname, savedata={}):
+        """Save a game."""
+        savedata["inventory"] = self.inventory
+        savedata["curmap"] = self.curmap
+        itemlists = {}
+        for ID, obj in self.__objects__.items():
+            if isinstance(obj, Map):
+                itemlists[ID] = list(obj.itemlist())
+        savedata["itemlists"] = itemlists
+        self.__sOpen__(fname, savedata)
+
+    def Load(self, fname, loaddata=None):
+        """Load a game."""
+        if loaddata is None:
+            loaddata = self.__lOpen__(fname)
+
+        if len(set(["inventory", "curmap", "itemlists"]) - set(loaddata)) != 0:
+            raise LoadGameError("Missing data in savefile!")
+
+        for ID, itemlist in loaddata["itemlists"].items():
+            self.__objects__[ID].itemlist[''] = NumeratedList.FromList(itemlist)
+        self.curmap = loaddata["curmap"]
+        self.inventory = loaddata["inventory"]
+
     def GetCurmap(self):
         return self.__objects__[self.curmap]
 
     def CheckScope(self, *ents):
-        """Check if a entity is in the current scope (curmap or inventory)"""
+        """Check if an entity is in the current scope (curmap or inventory)"""
         return all([a.id in self.inventory or a.id in self.GetCurmap().itemlist() for a in ents])
 
     def CheckMapScope(self, *ents):

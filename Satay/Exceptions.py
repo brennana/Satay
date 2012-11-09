@@ -21,6 +21,14 @@ class StopGame(Exception):
     """Exception thrown when game must be stopped in .Run()"""
     pass
 
+class LoadGameError(Exception):
+    """Error loading a game."""
+    pass
+
+class SaveGameError(Exception):
+    """Error saving a game."""
+    pass
+
 class SettingsError(Exception):
     """Error in game settings"""
     pass

@@ -27,6 +27,12 @@ class BaseGameFuncs(FunctionContainer):
         self.game = game
         super(FunctionContainer, self).__init__()
 
+    def SaveGame(self, fname):
+        self.game.Save(fname)
+
+    def LoadGame(self, fname):
+        self.game.Load(fname)
+
     def Replace(self, item1, item2):
         """Replace item1 with item2."""
         item1,item2 = self.__toref__(item1,item2)
@@ -61,3 +67,7 @@ class BaseGameFuncs(FunctionContainer):
         """Add 1 of 'item' to the inventory."""
         item = self.__toref__(item)
         self.game.inventory.Give(item)
+
+    def GetInventory(self):
+        """Get the full inventory (dereferenced)."""
+        return {self.__toent__(k):v for k,v in self.game.inventory.items()}
