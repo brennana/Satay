@@ -1,5 +1,8 @@
 *.py[co]
 
+# Satay
+*.sav
+
 # Ninja IDE
 *.nja
 
