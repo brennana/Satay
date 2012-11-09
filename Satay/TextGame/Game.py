@@ -25,11 +25,13 @@ from Functions import *
 
 class Map(BaseGame.Map):
     """Class representing map entity (places the player and items inhabit)"""
-    pass
+    def __init__(self, **props):
+        super(Map, self).__init__(**props)
 
 class Item(BaseGame.Item):
     """Class representing item entity (things the player interacts with)"""
-    pass
+    def __init__(self, **props):
+        super(Item, self).__init__(**props)
 
 class TextGame(BaseGame.BaseGame):
     """Text-based game with Satay."""
@@ -45,9 +47,6 @@ class TextGame(BaseGame.BaseGame):
         """Represents one cycle for the game."""
         #Print the current map's name and desc.
         cmd = raw_input("> ")
-        # User desires to quit the game
-        if cmd == 'quit':
-            raise StopGame()
         try:
             pcmd = self.__parse__(cmd)
         except AmbiguityError as ex:
@@ -134,11 +133,6 @@ class TextGame(BaseGame.BaseGame):
 
     def Run(self):
         """Run the game."""
-        # Print title and author of game as well
-        # as specifics for start map, then go into loop
-        self.Print(self.title + " by " + self.author)
-        self.Print(self.GetCurmap().name())
-        self.Print(self.GetCurmap().desc())
         while 1:
             try:
                 self.__mainloop__()

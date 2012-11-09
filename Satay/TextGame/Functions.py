@@ -20,6 +20,7 @@ Satay on GitHub: https://github.com/Valdez42/Satay
 -------------------------------------------------"""
 
 from ..BaseGame import Functions
+from ..Exceptions import StopGame
 
 class TextGameFuncs(Functions.BaseGameFuncs):
     """The function container for Satay functions."""
@@ -29,3 +30,7 @@ class TextGameFuncs(Functions.BaseGameFuncs):
     def Print(self, message):
         """Print a Message to Game Screen."""
         print(message)
+
+    def QuitGame(self):
+        """Quit the current game."""
+        raise StopGame
