@@ -61,13 +61,19 @@ class Command(object):
     PropertyMsg       = "You cannot do that."
     ScopeMsg          = "Object is nowhere to be found."
 
+class Dynamic(dict):
+    """A type of dictionary for dynamic properties (key is dynamic ident, value is value)."""
+    def __init__(self, default, **dyns):
+        dyns[''] = default
+        super(Dynamic, self).__init__(**dyns)
+
 class Property(object):
     """Class to hold attr name and value, used for defining module properties
         and for shorthand value retreival."""
     def __init__(self, name, value):
         self.name = name
-        if type(value) != dict:
-            self.value = {'':value}
+        if not isinstance(value, Dynamic):
+            self.value = Dynamic(value)
         else:
             self.value = value
     def __getitem__(self, item=''):
@@ -75,6 +81,11 @@ class Property(object):
             return self.value[item]
         except KeyError:
             return self.value['']
+    def __setitem__(self, item, value):
+        try:
+            self.value[item] = value
+        except KeyError:
+            self.value[''] = value
     def __repr__(self):
         return self.value['']
     def __call__(self, attr=''):
@@ -88,8 +99,8 @@ class EntBase(object):
         self.__props__ = {}
         if "name" not in props or "desc" not in props:
             raise EntityError("Name and/or description not defined!")
-        if type(props["name"]) == dict or type(props["desc"]) == dict:
-            raise EntityError("Name nor description may be dynamic!")
+        if isinstance(props["name"], Dynamic) or isinstance(props["desc"], Dynamic):
+            raise EntityError("Neither name nor description may be dynamic!")
         for prop in props:
             self.__props__[prop] = Property(prop, props[prop])
     def __getattr__(self, attr):
@@ -139,6 +150,15 @@ class NumeratedList(dict):
             return self[obj] > 0
         else:
             return False
+
+    @classmethod
+    def FromList(cls, lst):
+        """Create a NumeratedList from actual list object."""
+        d = {}
+        for item in lst:
+            d[item] = lst.count(item)
+        return cls(**d)
+
     def Give(self, item, amt=1):
         if item not in self:
             self[item] = amt
@@ -165,7 +185,7 @@ class FunctionContainer(object):
         """Resolve EntRefs into the actual entity"""
         newargs = []
         for arg in args:
-            if isinstance(arg, EntRef):
+            if isinstance(arg, str):
                 newargs.append(self.game.__objects__[arg])
             else:
                 newargs.append(arg)
@@ -186,4 +206,3 @@ class FunctionContainer(object):
             return newargs
         else:
             return newargs[0]
-
