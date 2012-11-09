@@ -27,7 +27,7 @@ class kill(Command):
             self.ThrowScope()
 
     funclist = [form1,form2]
-    NoSuitableFormMsg = "No function found for args given!"
+    NoSuitableFormMsg = "Kill what?"
     ConjunctionMsg    = "Learn to English, my friend."
     TypeMsg           = "You cannot kill like this!"
     PropertyMsg       = "You cannot kill this!"

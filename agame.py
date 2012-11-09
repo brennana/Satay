@@ -1,8 +1,8 @@
 # A test game
-from Satay.TextGame.Game import Map, Item, TextGame
-from Satay.Base import NumeratedList
+from Satay.PorkStyleTextGame.Game import Map, Item, PorkStyleTextGame as GameMode
+from Satay.Base import NumeratedList, Dynamic
 from Commands.kill import kill, murder
-from Commands.basic import look, go, get, take, drop
+from Commands.basic import look, go, get, take, drop, inventory, inv, i, save, load, quit
 
 objects = {
     "mPuddle":Map(
@@ -23,6 +23,10 @@ objects = {
         nbase="heree",
         descriptors=[],
         n="mPuddle",
+        itemlist=NumeratedList(
+            iStone=2,
+            iSword=1,
+        ),
     ),
 
     "iTem":Item(
@@ -30,11 +34,21 @@ objects = {
         desc="A wonderous item for you.",
         nbase="item",
         descriptors=['wonderous'],
-        kill_msg={
-            '':"My item! NOESSS!!!",
-            "iSword":"You killed my item with a sword!?!?",
-        },
-        kill_newitem="iStone",
+        kill_msg=Dynamic(
+            "My item! NOESSS!!!",
+            iSword="You killed my item with a sword!?!?",
+        ),
+        kill_newitem=Dynamic(
+            "iStone",
+            iSword="iPebble"
+        ),
+    ),
+
+    "iPebble":Item(
+        name="Pebble",
+        desc="A small gray pebble.",
+        nbase="pebble",
+        descriptors=["small", "gray"],
     ),
 
     "iStone":Item(
@@ -61,10 +75,10 @@ settings = {
         iSword=1,
     ),
     "objects":objects,
-    "commands":[kill, murder, look, go, get, take, drop],
+    "commands":[kill, murder, look, go, get, take, drop, inventory, inv, i, save, load, quit],
 }
 
 # Start game immediately
 if __name__ == "__main__":
-    aGame = TextGame(settings)
+    aGame = GameMode(settings)
     aGame.Run()
