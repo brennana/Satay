@@ -6,6 +6,8 @@ from Satay.Exceptions import *
 # Create commands
 class kill(Command):
     def form1(self, item1):
+        if item1 in ["self", "myself"]:
+            self.game.EndGame("You killed yourself.")
         self.ExpectType(item1, Item)
         self.ExpectProperty(item1, 'kill_msg','kill_newitem')
         if self.game.CheckScope(item1):

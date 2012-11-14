@@ -31,6 +31,11 @@ class TextGameFuncs(Functions.BaseGameFuncs):
         """Print a Message to Game Screen."""
         print(message)
 
+    def EndGame(self, msg):
+        """End the current game with a message (such as Game Over) and quit."""
+        self.game.Print(msg)
+        self.game.QuitGame()
+
     def QuitGame(self):
         """Quit the current game."""
         raise StopGame
