@@ -13,7 +13,15 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 Satay on GitHub: https://github.com/Valdez42/Satay
 
- __init__.py --
-   The Satay.PorkStyleTextGame package defines the
-   "classical" Pork-style game mode.
+ Functions.py --
+   Dervives the FunctionContainer class from base
+   with standard Satay functions. This class is
+   instanced in Game.py.
 -------------------------------------------------"""
+
+from ..BaseGame import Functions
+
+class KivyGameFuncs(Functions.BaseGameFuncs):
+    """The function container for Satay functions."""
+    def __init__(self, game):
+        super(KivyGameFuncs, self).__init__(game)

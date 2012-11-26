@@ -14,6 +14,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 Satay on GitHub: https://github.com/Valdez42/Satay
 
  __init__.py --
-   The Satay.PorkStyleTextGame package defines the
-   "classical" Pork-style game mode.
+   The Satay.KivyGame package defines a basic
+   gamemode that uses the Kivy library.
 -------------------------------------------------"""
