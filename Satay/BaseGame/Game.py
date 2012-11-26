@@ -63,9 +63,6 @@ class BaseGame(object):
     def __getattr__(self, attr):
         return self.caller.__getattribute__(attr)
 
-    def __mainloop__(self):
-        pass
-
     def __setids__(self, objs):
         newObjs = {}
         for objID, obj in objs.items():
