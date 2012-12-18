@@ -68,7 +68,6 @@ class TextGame(BaseGame.BaseGame):
                 continue
         if not called:
             self.Print("Hmm?")
-        super(TextGame, self).__mainloop__()
 
     def __parse__(self, line):
         """Parses user input for Command class"""
