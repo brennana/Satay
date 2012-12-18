@@ -29,6 +29,8 @@ kivy.require("1.4.1")
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.factory import Factory
+from kivy.properties import ObjectProperty, StringProperty
+
 
 class Map(BaseGame.Map):
     """Class representing map entity (places the player and items inhabit)"""
@@ -40,16 +42,32 @@ class Item(BaseGame.Item):
     def __init__(self, **props):
         super(Item, self).__init__(**props)
 
+
+class MapWidget(Widget):
+    """Kivy widget that contains a Satay.Base.EntItem map derivative."""
+    itsmap = StringProperty(None)
+
+class ItemListWidget(Widget):
+    """Kivy widget that contains Satay.Base.EntItem item derivatives (itemlist)."""
+    itsitems = ObjectProperty(None)
+
 class SatayWidget(Widget):
     """The Main game widget."""
-    pass
+    def __init__(self, satayGame):
+        self.satay = satayGame
+        super(SatayWidget, self).__init__()
 
+Factory.register("MapWidget", MapWidget)
+Factory.register("ItemListWidget", ItemListWidget)
 Factory.register("SatayWidget", SatayWidget)
 
 class SatayApp(App):
     """The basic Kivy application class."""
+    def __init__(self,satayGame,**kwargs):
+        self.satay = satayGame
+        super(SatayApp,self).__init__(**kwargs)
     def build(self):
-        return SatayWidget()
+        return SatayWidget(self.satay)
 
 class KivyGame(BaseGame.BaseGame):
     """Basic game using Kivy."""
@@ -58,4 +76,4 @@ class KivyGame(BaseGame.BaseGame):
         super(KivyGame, self).__init__(settings, funcCls)
 
     def Run(self):
-        self.AppCls().run()
+        self.AppCls(self).run()
