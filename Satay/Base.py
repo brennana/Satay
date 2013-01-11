@@ -115,6 +115,60 @@ class EntBase(object):
     def __str__(self):
         return self.name()
 
+class Action(object):
+    def __init__(self, funcname):
+        self.funcname = funcname
+    def __call__(self, *args):
+        return lambda game: getattr(game, self.funcname)(*args)
+
+class Condition(object):
+    """Generates lambda functions based on chosen operator."""
+    def __init__(self, var):
+        self.var = var
+    def Equals(self, other):
+        return lambda game: game.variables[self.var] == other
+    def LessThan(self, other):
+        return lambda game: game.variables[self.var] < other
+    def GreaterThan(self, other):
+        return lambda game: game.variables[self.var] > other
+    def GreaterThanOrEquals(self, other):
+        return lambda game: game.variables[self.var] >= other
+    def LessThanOrEquals(self, other):
+        return lambda game: game.variables[self.var] <= other
+    def NotEquals(self, other):
+        return lambda game: game.variables[self.var] != other
+    def Is(self, other):
+        return lambda game: game.variables[self.var] is other
+        
+
+class Response(object):
+    """Represents a user response to an NPC dialog."""
+    def __init__(self, response, redirect, condition=lambda game: True):
+        self.response = response
+        self.redirect = redirect
+        self.condition = condition
+
+class Dialog(object):
+    """Object that represents a single dialog item (NPC speech and then
+        possible respones from the player plus actions the NPC can execute.)"""
+    def __init__(self, speech, *responses, **props):
+        self.speech = speech
+        self.responses = responses
+        if "action" in props:
+            self.action = props["action"]
+        else:
+            self.action = lambda game: 0
+        if "end" in props:
+            self.end = props["end"]
+        else:
+            self.end = False
+
+class DialogMap(dict):
+    """Object that represents a map of a dialog 
+    (i.e. what speech returns what from an NPC and in what order, etc.)"""
+    def __init__(self, **dialogs):
+        super(DialogMap, self).__init__(dialogs)
+
 class NumeratedListIter(object):
     """Iterator object for NumeratedList"""
     def __init__(self, lst):
@@ -132,7 +186,7 @@ class NumeratedListIter(object):
         if self.cur > len(self.lst)-1:
             raise StopIteration
         else:
-            return self.keys[self.cur]
+            return self.keys[selfProperty(prop, props[prop]).cur]
 
 class NumeratedList(dict):
     """A type of dictionary that acts as a list.

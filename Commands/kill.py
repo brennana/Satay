@@ -1,6 +1,6 @@
 # Lil' test command script
 from Satay.Base import Command
-from Satay.BaseGame.Game import Item
+from Satay.BaseGame.Game import Item, NPC
 from Satay.Exceptions import *
 
 # Create commands
@@ -8,7 +8,7 @@ class kill(Command):
     def form1(self, item1):
         if item1 in ["self", "myself"]:
             self.game.EndGame("You killed yourself.")
-        self.ExpectType(item1, Item)
+        self.ExpectType(item1, Item, NPC)
         self.ExpectProperty(item1, 'kill_msg','kill_newitem')
         if self.game.CheckScope(item1):
             self.game.Print(item1.kill_msg())
@@ -17,8 +17,8 @@ class kill(Command):
             self.ThrowScope()
 
     def form2(self, item1, cWith, item2):
-        self.ExpectType(item1, Item)
-        self.ExpectType(item2, Item)
+        self.ExpectType(item1, Item, NPC)
+        self.ExpectType(item2, Item, NPC)
         self.ExpectProperty(item1, "kill_msg", "kill_newitem")
         if cWith not in ['with','using']:
             self.ThrowConjunction()

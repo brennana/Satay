@@ -33,6 +33,9 @@ class BaseGameFuncs(FunctionContainer):
     def LoadGame(self, fname):
         self.game.Load(fname)
 
+    def SetVar(self, varname, value):
+        self.game.variables[varname] = value
+
     def Replace(self, item1, item2):
         """Replace item1 with item2."""
         item1,item2 = self.__toref__(item1,item2)

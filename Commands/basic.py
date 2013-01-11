@@ -1,6 +1,6 @@
 # Some important, basic commands for use in a TextGame
 from Satay.Base import Command
-from Satay.TextGame.Game import Item, Map
+from Satay.TextGame.Game import Item, Map, NPC
 from Satay.Exceptions import *
 import time
 import os
@@ -10,7 +10,7 @@ class look(Command):
         self.game.Print(self.game.GetCurmap().name())
         self.game.Print(self.game.GetCurmap().desc())
     def form2(self, obj):
-        self.ExpectType(obj, Item, Map)
+        self.ExpectType(obj, Item, Map, NPC)
         if self.game.CheckScope(obj):
             self.game.Print(obj.name())
             self.game.Print(obj.desc())
@@ -60,7 +60,7 @@ class go(Command):
 
 class take(Command):
     def form1(self, item):
-        self.ExpectType(item, Item)
+        self.ExpectType(item, Item, NPC)
         if self.game.CheckMapScope(item):
             try:
                 self.ExpectProperty(item, 'untakeable')
@@ -87,7 +87,7 @@ class get(take):
 
 class drop(Command):
     def form1(self, item):
-        self.ExpectType(item, Item)
+        self.ExpectType(item, Item, NPC)
         if self.game.CheckInvScope(item):
             self.game.AddToMap(item)
             self.game.RemoveFromInventory(item)

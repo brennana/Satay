@@ -1,8 +1,9 @@
 # A test game
-from Satay.PorkStyleTextGame.Game import Map, Item, PorkStyleTextGame as GameMode
-from Satay.Base import NumeratedList, Dynamic
+from Satay.PorkStyleTextGame.Game import Map, Item, NPC, PorkStyleTextGame as GameMode
+from Satay.Base import NumeratedList, Dynamic, DialogMap, Dialog, Response, Action, Condition
 from Commands.kill import kill, murder
 from Commands.basic import look, go, get, take, drop, inventory, inv, i, save, load, quit
+from Commands.talk import talk
 
 objects = {
     "mPuddle":Map(
@@ -13,6 +14,7 @@ objects = {
         itemlist=NumeratedList(
             iTem=3,
             iStone=2,
+            nMan=1,
         ),
         s="mHeree",
     ),
@@ -64,6 +66,50 @@ objects = {
         nbase="sword",
         descriptors=['sharp','shiny'],
     ),
+
+    "iChicken":Item(
+        name="Chicken",
+        desc="Some juicy, cooked chicken.",
+        nbase="chicken",
+        descriptors=['juicy', 'cooked'],
+    ),
+
+    "nMan":NPC(
+        name="A Man",
+        desc="An old, aging man.",
+        nbase="man",
+        descriptors=['old','aging'],
+        dialog=DialogMap(
+            start=Dialog(
+                "Hey there.",
+                Response(
+                    "Hey.",
+                    'a0',
+                    Condition("manTalkedPreviously01").Equals(True)
+                ),
+                Response("Sup.",'a0'),
+            ),
+            a0=Dialog(
+                "Want some chicken?",
+                Response("I like chicken","a1"),
+                Response("I hate chicken.","a2"),
+            ),
+            a1=Dialog(
+                "Nice! So do I. Have some!",
+                Response("Bye", "e1"),
+                action=Action("AddToInventory")("iChicken"),
+            ),
+            a2=Dialog(
+                "Aw, dang.",
+                Response("Bye", "e1"),
+            ),
+            e1=Dialog(
+                "Good bye, then.",
+                action=Action("SetVar")("manTalkedPreviously01", True),
+                end=True,
+            ),
+        )
+    )
 }
 
 settings = {
@@ -75,7 +121,10 @@ settings = {
         iSword=1,
     ),
     "objects":objects,
-    "commands":[kill, murder, look, go, get, take, drop, inventory, inv, i, save, load, quit],
+    "commands":[kill, murder, talk, look, go, get, take, drop, inventory, inv, i, save, load, quit],
+    "variables":{
+        "manTalkedPreviously01":False,
+    }
 }
 
 # Start game immediately

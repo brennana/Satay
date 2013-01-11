@@ -37,6 +37,15 @@ class Item(EntBase):
     def __init__(self, **props):
         super(Item, self).__init__(**props)
 
+class NPC(EntBase):
+    """Class representing NPCs (non player characters)."""
+    def __init__(self, **props):
+        if "dialog" not in props:
+            raise EntityError("Missing dialog map in NPC!")
+        if not isinstance(props["dialog"], DialogMap):
+            raise EntityError("Dialog map must be of type 'DialogMap'!")
+        super(NPC, self).__init__(**props)
+
 
 class BaseGame(object):
     """Base class for any kind of game."""
@@ -53,6 +62,12 @@ class BaseGame(object):
             self.inventory = settings["items"]
         else:
             self.inventory = NumeratedList()
+        if "variables" in settings:
+            if type(settings["variables"]) != dict:
+                raise SettingsError("Game variables must be a dictionary!")
+            self.variables = settings["variables"]
+        else:
+            self.variables = dict()
         self.title = settings["title"]
         self.author = settings["author"]
         self.__objects__ =  self.__setids__(settings["objects"])
@@ -98,6 +113,7 @@ class BaseGame(object):
         """Save a game."""
         savedata["inventory"] = self.inventory
         savedata["curmap"] = self.curmap
+        savedata["variables"] = self.variables
         itemlists = {}
         for ID, obj in self.__objects__.items():
             if isinstance(obj, Map):
@@ -117,6 +133,7 @@ class BaseGame(object):
             self.__objects__[ID].itemlist[''] = NumeratedList.FromList(itemlist)
         self.curmap = loaddata["curmap"]
         self.inventory = loaddata["inventory"]
+        self.variables = loaddata["variables"]
 
     def GetCurmap(self):
         return self.__objects__[self.curmap]

@@ -31,6 +31,10 @@ class TextGameFuncs(Functions.BaseGameFuncs):
         """Print a Message to Game Screen."""
         print(message)
 
+    def RequestInput(self, prompt):
+        """Request some user input with given prompt."""
+        return raw_input(prompt)
+
     def EndGame(self, msg):
         """End the current game with a message (such as Game Over) and quit."""
         self.game.Print(msg)

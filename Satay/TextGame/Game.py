@@ -33,6 +33,11 @@ class Item(BaseGame.Item):
     def __init__(self, **props):
         super(Item, self).__init__(**props)
 
+class NPC(BaseGame.NPC):
+    """Class representing NPCs (non player characters)."""
+    def __init__(self, **props):
+        super(NPC, self).__init__(**props)
+
 class TextGame(BaseGame.BaseGame):
     """Text-based game with Satay."""
     def __init__(self, settings, funcCls=TextGameFuncs):
