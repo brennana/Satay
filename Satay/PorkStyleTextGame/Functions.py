@@ -27,4 +27,4 @@ class PorkStyleTextGameFuncs(Functions.TextGameFuncs):
         super(PorkStyleTextGameFuncs, self).__init__(game)
     def Print(self, message):
         """Print message to game screen."""
-        super(PorkStyleTextGameFuncs, self).Print(message.strip() + "\n")
+        super(PorkStyleTextGameFuncs, self).Print(str(message).strip() + "\n")
