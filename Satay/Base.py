@@ -143,10 +143,12 @@ class Condition(object):
 
 class Response(object):
     """Represents a user response to an NPC dialog."""
-    def __init__(self, response, redirect, condition=lambda game: True):
+    def __init__(self, response, redirect, *conditions):
         self.response = response
         self.redirect = redirect
-        self.condition = condition
+        if len(conditions) == 0:
+            conditions = [lambda game: True]
+        self.conditions = conditions
 
 class Dialog(object):
     """Object that represents a single dialog item (NPC speech and then
@@ -155,9 +157,11 @@ class Dialog(object):
         self.speech = speech
         self.responses = responses
         if "action" in props:
-            self.action = props["action"]
+            self.actions = props["action"]
+            if not type(self.actions) == list:
+                self.actions = [self.actions]
         else:
-            self.action = lambda game: 0
+            self.actions = [lambda game: 0]
         if "end" in props:
             self.end = props["end"]
         else:

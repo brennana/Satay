@@ -14,13 +14,14 @@ class talk(Command):
             while True:
                 self.game.Print(tree[curpos].speech)
                 if redirected:
-                    tree[curpos].action(self.game)
+                    for action in tree[curpos].actions:
+                        action(self.game)
                 redirected = False
                 if tree[curpos].end == True:
                     break
                 num = 0
                 for response in tree[curpos].responses:
-                    if not response.condition(self.game):
+                    if not all([func(self.game) for func in response.conditions]):
                         continue
                     num += 1
                     self.game.Print(str(num)+') '+response.response)

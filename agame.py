@@ -93,11 +93,20 @@ objects = {
                 "Want some chicken?",
                 Response("I like chicken","a1"),
                 Response("I hate chicken.","a2"),
+                Response(
+                    "That chicken sucked last time.",
+                    "a2",
+                    Condition("manTalkedPreviously01").Equals(True), # Although redundant, this is merely an example
+                    Condition("gotManChicken01").Equals(True),
+                ),
             ),
             a1=Dialog(
                 "Nice! So do I. Have some!",
                 Response("Bye", "e1"),
-                action=Action("AddToInventory")("iChicken"),
+                action=[
+                    Action("AddToInventory")("iChicken"),
+                    Action("SetVar")("gotManChicken01", True),
+                ],
             ),
             a2=Dialog(
                 "Aw, dang.",
@@ -124,6 +133,7 @@ settings = {
     "commands":[kill, murder, talk, look, go, get, take, drop, inventory, inv, i, save, load, quit],
     "variables":{
         "manTalkedPreviously01":False,
+        "gotManChicken01":False,
     }
 }
 
