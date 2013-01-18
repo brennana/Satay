@@ -98,7 +98,7 @@ if Y("Cleanup unnecessary files? (y for yes): "):
 if xcode == 0:
     print("Satay game built successfully.")
     print("The 'dist' folder in your game's directory contains your built program.")
-    if Y("Do you need the MSCV90 DLL distro? (y for yes): "):
+    if Y("Do you need the MSVC90 DLL distro? (y for yes): "):
         print("Downloading and extracting the distro package to your dist directory...")
         request = urllib2.Request("http://www.fileden.com/files/2012/11/23/3369670/MSVC90_distro.zip")
         request.add_header('User-Agent','Mozilla/5.0 (Windows NT 6.0; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11')
@@ -108,7 +108,7 @@ if xcode == 0:
             z.extractall("./dist")
         if Y("Cleanup .zip package? (y for yes): "):
             os.remove("./MSVC90_distro.zip")
-    print("Your game is ready to distribute! Ensure you give people the entire 'dist' directory!")
+    print("Your game is ready for distrobution! Ensure you give people the entire 'dist' directory!")
     sys.exit()
 else:
     print("py2exe failed with exit code %s" % xcode)
