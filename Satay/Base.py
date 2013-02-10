@@ -18,6 +18,7 @@ Satay on GitHub: https://github.com/Valdez42/Satay
 -------------------------------------------------"""
 
 from Exceptions import *
+import sqlite3
 
 class Command(object):
     """Base Command Class -- All commands derive from here."""
@@ -121,25 +122,85 @@ class Action(object):
     def __call__(self, *args):
         return lambda game: getattr(game, self.funcname)(*args)
 
+class HistoryQuery(object):
+    def __init__(self, verb):
+        self.verb = verb
+    def To(self, obj):
+        return lambda game: game.history.Query(self.verb, obj, 0, 1)
+    def With(self, obj):
+        return lambda game: game.history.Query(self.verb, obj, 1, None)
+
 class Condition(object):
     """Generates lambda functions based on chosen operator."""
     def __init__(self, var):
         self.var = var
-    def Equals(self, other):
-        return lambda game: game.variables[self.var] == other
-    def LessThan(self, other):
-        return lambda game: game.variables[self.var] < other
-    def GreaterThan(self, other):
-        return lambda game: game.variables[self.var] > other
-    def GreaterThanOrEquals(self, other):
-        return lambda game: game.variables[self.var] >= other
-    def LessThanOrEquals(self, other):
-        return lambda game: game.variables[self.var] <= other
-    def NotEquals(self, other):
-        return lambda game: game.variables[self.var] != other
+    def __eq__(self, other):
+        place = self.ResolveSubject(self.var)
+        if place != "variables":
+            return lambda game: getattr(game, place) == other
+        else:
+            return lambda game: getattr(game, place)[self.var] == other
+
+    def __lt__(self, other):
+        place = self.ResolveSubject(self.var)
+        if place != "variables":
+            return lambda game: getattr(game, place) < other
+        else:
+            return lambda game: getattr(game, place)[self.var] < other
+
+    def __gt__(self, other):
+        place = self.ResolveSubject(self.var)
+        if place != "variables":
+            return lambda game: getattr(game, place) > other
+        else:
+            return lambda game: getattr(game, place)[self.var] > other
+
+    def __ge__(self, other):
+        place = self.ResolveSubject(self.var)
+        if place != "variables":
+            return lambda game: getattr(game, place) >= other
+        else:
+            return lambda game: getattr(game, place)[self.var] >= other
+
+    def __le__(self, other):
+        place = self.ResolveSubject(self.var)
+        if place != "variables":
+            return lambda game: getattr(game, place) <= other
+        else:
+            return lambda game: getattr(game, place)[self.var] <= other
+
+    def __ne__(self, other):
+        place = self.ResolveSubject(self.var)
+        if place != "variables":
+            return lambda game: getattr(game, place) != other
+        else:
+            return lambda game: getattr(game, place)[self.var] != other
+
+    def Contains(self, key):
+        place = self.ResolveSubject(self.var)
+        if place != "variables":
+            return lambda game: key in getattr(game, place)
+        else:
+            return lambda game: key in getattr(game, place)[self.var]
+
     def Is(self, other):
-        return lambda game: game.variables[self.var] is other
-        
+        place = self.ResolveSubject(self.var)
+        if place != "variables":
+            return lambda game: getattr(game, place) is other
+        else:
+            return lambda game: getattr(game, place)[self.var] is other
+
+    def ResolveSubject(self, subject):
+        if subject == "inventory":
+            return "inventory"
+        else:
+            return "variables"
+    class history(object):
+        """Internal History methods for Condition"""
+        @classmethod
+        def Happened(cls, verb):
+            return HistoryQuery(verb)
+    History = history
 
 class Response(object):
     """Represents a user response to an NPC dialog."""
@@ -190,7 +251,7 @@ class NumeratedListIter(object):
         if self.cur > len(self.lst)-1:
             raise StopIteration
         else:
-            return self.keys[selfProperty(prop, props[prop]).cur]
+            return self.keys[self.cur]
 
 class NumeratedList(dict):
     """A type of dictionary that acts as a list.
@@ -264,3 +325,96 @@ class FunctionContainer(object):
             return newargs
         else:
             return newargs[0]
+
+class History(object):
+    """Class for storing an RDB of all game history (executed commands)."""
+    def __init__(self, dbConnection):
+        self.conn = dbConnection
+        self.cursor = self.conn.cursor()
+
+    @classmethod
+    def New(cls, objects, commands):
+        conn = sqlite3.connect(":memory:")
+        conn.executescript("""CREATE  TABLE IF NOT EXISTS COMMAND (
+              id INTEGER NOT NULL PRIMARY KEY ASC AUTOINCREMENT UNIQUE,
+              name TEXT NOT NULL UNIQUE
+              );
+
+            CREATE  TABLE IF NOT EXISTS OBJECT (
+              id INTEGER NOT NULL PRIMARY KEY ASC AUTOINCREMENT UNIQUE,
+              name TEXT NOT NULL UNIQUE
+              );
+
+            CREATE  TABLE IF NOT EXISTS EXECUTED (
+              id INTEGER NOT NULL PRIMARY KEY ASC AUTOINCREMENT,
+              COMMAND_id INTEGER NOT NULL ,
+              CONSTRAINT fk_EXECUTED_COMMAND
+                FOREIGN KEY (COMMAND_id )
+                REFERENCES COMMAND (id )
+                ON DELETE NO ACTION
+                ON UPDATE NO ACTION);
+
+            CREATE  TABLE IF NOT EXISTS EXECUTED_has_OBJECT (
+              EXECUTED_id INTEGER NOT NULL,
+              OBJECT_id INTEGER NOT NULL,
+              placement INTEGER NOT NULL,
+              CONSTRAINT fk_EXECUTED_has_OBJECT_EXECUTED1
+                FOREIGN KEY (EXECUTED_id )
+                REFERENCES EXECUTED (id )
+                ON DELETE NO ACTION
+                ON UPDATE NO ACTION,
+              CONSTRAINT fk_EXECUTED_has_OBJECT_OBJECT1
+                FOREIGN KEY (OBJECT_id )
+                REFERENCES OBJECT (id )
+                ON DELETE NO ACTION
+                ON UPDATE NO ACTION);
+            """)
+        conn.executemany("INSERT INTO COMMAND (name) VALUES (?)", [(c.__name__,) for c in commands])
+        conn.executemany("INSERT INTO OBJECT (name) VALUES (?)", [(k,) for k in objects])
+        conn.commit()
+        return cls(conn)
+
+    @classmethod
+    def Load(cls, dump):
+        conn = sqlite3.connect(":memory:")
+        conn.executescript(dump)
+        conn.commit()
+        return cls(conn)
+
+    def Dump(self):
+        dump = ""
+        for line in self.conn.iterdump():
+            dump += line
+        return dump
+
+    def AddEntry(self, cmd, args):
+        # Remove conjunctions
+        count = 0
+        for arg in args:
+            if not isinstance(arg, EntBase):
+                args.pop(count)
+            count += 1
+        self.cursor.execute("INSERT INTO EXECUTED (COMMAND_id) SELECT id FROM COMMAND WHERE name=? LIMIT 1;", (cmd,))
+        self.cursor.executemany("INSERT INTO EXECUTED_has_OBJECT (EXECUTED_id, OBJECT_id, placement) SELECT last_insert_rowid(), id, ? FROM OBJECT WHERE name=?;", [(c,a.id) for c,a in zip(range(1, len(args)+1), args)])
+        self.conn.commit()
+
+    def __parseCSV__(self, table):
+        newTable = []
+        for row in table:
+            newTable.append(row[0].split(','))
+        return newTable
+
+    def Query(self, verb, obj, p1=None, p2=None):
+        self.cursor.execute("""SELECT group_concat(OBJECT.name) FROM EXECUTED_has_OBJECT 
+                                    INNER JOIN OBJECT ON EXECUTED_has_OBJECT.OBJECT_id = OBJECT.id
+                                    INNER JOIN EXECUTED ON EXECUTED_has_OBJECT.EXECUTED_id = EXECUTED.id
+                                    INNER JOIN COMMAND ON EXECUTED.COMMAND_id = COMMAND.id
+                                  WHERE COMMAND.name = ?
+                                  GROUP BY EXECUTED.id;""", (verb,))
+        table = self.__parseCSV__(self.cursor.fetchall())
+        for row in table:
+            if obj in row[p1:p2]:
+                return True
+
+        return False
+        

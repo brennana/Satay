@@ -22,6 +22,7 @@ Satay on GitHub: https://github.com/Valdez42/Satay
 from ..TextGame import Game as TextGame
 from ..Exceptions import *
 from Functions import *
+from ..Base import History
 
 class Map(TextGame.Map):
     """Map entity derivative."""

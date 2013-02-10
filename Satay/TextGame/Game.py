@@ -43,9 +43,6 @@ class TextGame(BaseGame.BaseGame):
     def __init__(self, settings, funcCls=TextGameFuncs):
         if not all(["nbase" in w and "descriptors" in w for w in settings["objects"].values()]):
             raise SettingsError("Missing name conventions (nbase and descriptors)!")
-        if "commands" not in settings:
-            raise SettingsError("No commands defined for game!")
-        self.__commands__ = settings["commands"]
         super(TextGame, self).__init__(settings, funcCls)
 
     def __mainloop__(self):
@@ -67,6 +64,8 @@ class TextGame(BaseGame.BaseGame):
                     command(self, pcmd[1:])
                 except CommandError as ex:
                     self.Print(ex.message)
+                else:
+                    self.history.AddEntry(command.__name__, pcmd[1:])
                 called = True
                 break
             else:

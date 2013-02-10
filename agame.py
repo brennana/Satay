@@ -4,6 +4,7 @@ from Satay.Base import NumeratedList, Dynamic, DialogMap, Dialog, Response, Acti
 from Commands.kill import kill, murder
 from Commands.basic import look, go, get, take, drop, inventory, inv, i, save, load, quit
 from Commands.talk import talk
+from Commands.eat import eat
 
 objects = {
     "mPuddle":Map(
@@ -67,11 +68,19 @@ objects = {
         descriptors=['sharp','shiny'],
     ),
 
+    "iEmerald":Item(
+        name="Emerald"
+        desc="A green and valuable emerald.",
+        nbase="emerald",
+        descriptors=['green', 'valuable'],
+    ),
+
     "iChicken":Item(
         name="Chicken",
         desc="Some juicy, cooked chicken.",
         nbase="chicken",
         descriptors=['juicy', 'cooked'],
+        eat_edible=True,
     ),
 
     "nMan":NPC(
@@ -85,19 +94,30 @@ objects = {
                 Response(
                     "Hey.",
                     'a0',
-                    Condition("manTalkedPreviously01").Equals(True)
+                    Condition("manTalkedPreviously01") == True,
                 ),
                 Response("Sup.",'a0'),
+                Response(
+                    "I killed the item with my sword.",
+                    'e2',
+                    Condition.History.Happened("kill").To("iItem"),
+                    Condition.History.Happened("kill").With("iSword")
+                ),
             ),
             a0=Dialog(
                 "Want some chicken?",
-                Response("I like chicken","a1"),
+                Response("I like chicken.","a1"),
                 Response("I hate chicken.","a2"),
                 Response(
                     "That chicken sucked last time.",
                     "a2",
-                    Condition("manTalkedPreviously01").Equals(True), # Although redundant, this is merely an example
-                    Condition("gotManChicken01").Equals(True),
+                    Condition.History.Happened("talk").To("nMan"),
+                    Condition.History.Happened("eat").To("iChicken"),
+                ),
+                Response(
+                    "I already have some.",
+                    "a2",
+                    Condition("inventory").Contains("iChicken"),
                 ),
             ),
             a1=Dialog(
@@ -111,6 +131,11 @@ objects = {
             a2=Dialog(
                 "Aw, dang.",
                 Response("Bye", "e1"),
+            ),
+            e2=Dialog(
+                "Excellent! Take this emerald...",
+                action=Action("AddToInventory")("iEmerald"),
+                end=True,
             ),
             e1=Dialog(
                 "Good bye, then.",
@@ -130,10 +155,11 @@ settings = {
         iSword=1,
     ),
     "objects":objects,
-    "commands":[kill, murder, talk, look, go, get, take, drop, inventory, inv, i, save, load, quit],
+    "commands":[kill, murder, talk, look, go, get, take, drop, inventory, inv, i, save, load, quit, eat],
     "variables":{
         "manTalkedPreviously01":False,
         "gotManChicken01":False,
+        "chickenEaten":True,
     }
 }
 

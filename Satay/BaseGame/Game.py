@@ -62,6 +62,8 @@ class BaseGame(object):
             self.inventory = settings["items"]
         else:
             self.inventory = NumeratedList()
+        if "commands" not in settings:
+            raise SettingsError("No commands defined for game!")
         if "variables" in settings:
             if type(settings["variables"]) != dict:
                 raise SettingsError("Game variables must be a dictionary!")
@@ -71,8 +73,10 @@ class BaseGame(object):
         self.title = settings["title"]
         self.author = settings["author"]
         self.__objects__ =  self.__setids__(settings["objects"])
+        self.__commands__ = settings["commands"]
         self.curmap = settings['start']
         self.caller = funcCls(self)
+        self.history = History.New(self.__objects__, self.__commands__)
         super(BaseGame, self).__init__()
 
     def __getattr__(self, attr):
@@ -114,6 +118,7 @@ class BaseGame(object):
         savedata["inventory"] = self.inventory
         savedata["curmap"] = self.curmap
         savedata["variables"] = self.variables
+        savedata["history"] = self.history.Dump()
         itemlists = {}
         for ID, obj in self.__objects__.items():
             if isinstance(obj, Map):
@@ -126,7 +131,7 @@ class BaseGame(object):
         if loaddata is None:
             loaddata = self.__lOpen__(fname)
 
-        if len(set(["inventory", "curmap", "itemlists"]) - set(loaddata)) != 0:
+        if len(set(["inventory", "curmap", "itemlists", "history", "variables"]) - set(loaddata)) != 0:
             raise LoadGameError("Missing data in savefile!")
 
         for ID, itemlist in loaddata["itemlists"].items():
@@ -134,6 +139,10 @@ class BaseGame(object):
         self.curmap = loaddata["curmap"]
         self.inventory = loaddata["inventory"]
         self.variables = loaddata["variables"]
+        self.history = History.Load(loaddata["history"])
+
+    def InsertHistory(self, command, *args):
+        pass
 
     def GetCurmap(self):
         return self.__objects__[self.curmap]
