@@ -108,7 +108,7 @@ if xcode == 0:
             z.extractall("./dist")
         if Y("Cleanup .zip package? (y for yes): "):
             os.remove("./MSVC90_distro.zip")
-    print("Your game is ready for distrobution! Ensure you give people the entire 'dist' directory!")
+    print("Your game is ready for distribution! Ensure you give people the entire 'dist' directory!")
     sys.exit()
 else:
     print("py2exe failed with exit code %s" % xcode)
