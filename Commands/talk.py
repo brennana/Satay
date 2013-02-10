@@ -4,10 +4,10 @@ from Satay.Exceptions import *
 
 class talk(Command):
     def form1(self, npc1):
-        self.game.Print(npc1)
         self.ExpectType(npc1, NPC)
         if self.game.CheckScope(npc1):
             # Here we enter and traverse dialog tree from start to end
+            self.game.Print(npc1)
             tree = npc1.dialog()
             curpos = "start"
             redirected = True
