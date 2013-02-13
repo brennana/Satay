@@ -1,10 +1,12 @@
 # A test game
 from Satay.PorkStyleTextGame.Game import Map, Item, NPC, PorkStyleTextGame as GameMode
-from Satay.Base import NumeratedList, Dynamic, DialogMap, Dialog, Response, Action, Condition
+from Satay.Base import NumeratedList, Dynamic, DialogMap, Dialog, Response, Action, Condition, Event
 from Commands.kill import kill, murder
 from Commands.basic import look, go, get, take, drop, inventory, inv, i, save, load, quit
 from Commands.talk import talk
 from Commands.eat import eat
+
+
 
 objects = {
     "mPuddle":Map(
@@ -68,8 +70,28 @@ objects = {
         descriptors=['sharp','shiny'],
     ),
 
+    "iFork":Item(
+        name="Fork",
+        desc="A shiny, silver fork. It's quite pointy!",
+        nbase="fork",
+        descriptors=['shiny', 'silver', 'pointy'],
+        events=[
+            Event(
+                Condition.History.Happened("eat").With("iFork"),
+                Action("Replace")("iFork","iChickenFork")
+            ),
+        ],
+    ),
+
+    "iChickenFork":Item(
+        name="Chicken Stuck to Fork",
+        desc="Some awful chicken glued to a now dirty fork.",
+        nbase="fork",
+        descriptors=['chicken', 'dirty', 'pointy', 'awful'],
+    ),
+
     "iEmerald":Item(
-        name="Emerald"
+        name="Emerald",
         desc="A green and valuable emerald.",
         nbase="emerald",
         descriptors=['green', 'valuable'],
@@ -81,6 +103,10 @@ objects = {
         nbase="chicken",
         descriptors=['juicy', 'cooked'],
         eat_edible=True,
+        eat_message=Dynamic(
+            "Gah! This chicken is awful.",
+            iFork="Ewww. It seems glued to the fork now!",
+        ),
     ),
 
     "nMan":NPC(
@@ -153,6 +179,7 @@ settings = {
     "items":NumeratedList(
         iTem=3,
         iSword=1,
+        iFork=1,
     ),
     "objects":objects,
     "commands":[kill, murder, talk, look, go, get, take, drop, inventory, inv, i, save, load, quit, eat],

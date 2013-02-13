@@ -34,6 +34,13 @@ class Command(object):
             except TypeError:
                 continue
             else:
+                # Log history
+                self.game.history.AddEntry(self.__class__.__name__, list(args))
+                # Command was successful, evaluate all post-command events
+                for arg in args:
+                    if isinstance(arg, EntBase) and "events" in arg:
+                        for event in arg.events():
+                            event.Evaluate(self.game)
                 called = True
                 break
         if not called:
@@ -61,6 +68,18 @@ class Command(object):
     TypeMsg           = "You cannot do that."
     PropertyMsg       = "You cannot do that."
     ScopeMsg          = "Object is nowhere to be found."
+
+class Event(object):
+    """An event of which evaluates a condition and then executes actions."""
+    def __init__(self, condition, *actions):
+        self.condition = condition
+        self.actions = actions
+        super(Event, self).__init__()
+
+    def Evaluate(self, game):
+        if self.condition(game):
+            for action in self.actions:
+                action(game)
 
 class Dynamic(dict):
     """A type of dictionary for dynamic properties (key is dynamic ident, value is value)."""
@@ -395,7 +414,10 @@ class History(object):
                 args.pop(count)
             count += 1
         self.cursor.execute("INSERT INTO EXECUTED (COMMAND_id) SELECT id FROM COMMAND WHERE name=? LIMIT 1;", (cmd,))
-        self.cursor.executemany("INSERT INTO EXECUTED_has_OBJECT (EXECUTED_id, OBJECT_id, placement) SELECT last_insert_rowid(), id, ? FROM OBJECT WHERE name=?;", [(c,a.id) for c,a in zip(range(1, len(args)+1), args)])
+        # Get the executed id
+        self.cursor.execute("SELECT last_insert_rowid()")
+        executed = self.cursor.fetchone()[0]
+        self.cursor.executemany("INSERT INTO EXECUTED_has_OBJECT (EXECUTED_id, OBJECT_id, placement) SELECT ?, id, ? FROM OBJECT WHERE name=?;", [(executed,c,a.id) for c,a in zip(range(1, len(args)+1), args)])
         self.conn.commit()
 
     def __parseCSV__(self, table):

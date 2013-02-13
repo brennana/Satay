@@ -141,9 +141,6 @@ class BaseGame(object):
         self.variables = loaddata["variables"]
         self.history = History.Load(loaddata["history"])
 
-    def InsertHistory(self, command, *args):
-        pass
-
     def GetCurmap(self):
         return self.__objects__[self.curmap]
 

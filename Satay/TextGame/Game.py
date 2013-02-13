@@ -64,8 +64,6 @@ class TextGame(BaseGame.BaseGame):
                     command(self, pcmd[1:])
                 except CommandError as ex:
                     self.Print(ex.message)
-                else:
-                    self.history.AddEntry(command.__name__, pcmd[1:])
                 called = True
                 break
             else:
