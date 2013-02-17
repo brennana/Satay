@@ -19,6 +19,9 @@ sdist
 develop-eggs
 .installed.cfg
 
+# KDE Dolphin
+.directory
+
 # Installer logs
 pip-log.txt
 
