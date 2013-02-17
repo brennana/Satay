@@ -85,7 +85,7 @@ objects = {
         name="Chicken Stuck to Fork",
         desc="Some awful chicken glued to a now dirty fork.",
         nbase="fork",
-        descriptors=['chicken', 'dirty', 'pointy', 'awful'],
+        descriptors=['dirty', 'pointy', 'awful'],
     ),
 
     "iEmerald":Item(
@@ -124,7 +124,7 @@ objects = {
                 Response(
                     "I killed the item with my sword.",
                     'e2',
-                    Condition.History.Happened("kill").To("iItem"),
+                    Condition.History.Happened("kill").To("iTem"),
                     Condition.History.Happened("kill").With("iSword")
                 ),
             ),
