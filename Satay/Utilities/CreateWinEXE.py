@@ -1,5 +1,5 @@
 """-------------------------------------------------
-Satay Game Engine Copyright (C) 2012 Andy Brennan
+Satay Game Engine Copyright (C) 2013 Andy Brennan
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
 ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
@@ -100,7 +100,7 @@ if xcode == 0:
     print("The 'dist' folder in your game's directory contains your built program.")
     if Y("Do you need the MSVC90 DLL distro? (y for yes): "):
         print("Downloading and extracting the distro package to your dist directory...")
-        request = urllib2.Request("http://www.fileden.com/files/2012/11/23/3369670/MSVC90_distro.zip")
+        request = urllib2.Request("http://www.fileden.com/files/2013/11/23/3369670/MSVC90_distro.zip")
         request.add_header('User-Agent','Mozilla/5.0 (Windows NT 6.0; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11')
         with open("MSVC90_distro.zip", 'wb') as f:
             f.write(urllib2.urlopen(request).read())

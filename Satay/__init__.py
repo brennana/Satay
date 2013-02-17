@@ -1,5 +1,5 @@
 """-------------------------------------------------
-Satay Game Engine Copyright (C) 2012 Andy J. Brennan
+Satay Game Engine Copyright (C) 2013 Andy J. Brennan
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
 ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT

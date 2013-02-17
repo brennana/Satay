@@ -6,8 +6,6 @@ from Commands.basic import look, go, get, take, drop, inventory, inv, i, save, l
 from Commands.talk import talk
 from Commands.eat import eat
 
-
-
 objects = {
     "mPuddle":Map(
         name="A Puddle",
