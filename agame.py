@@ -120,7 +120,7 @@ objects = {
                 Response(
                     "Hey.",
                     'a0',
-                    Condition("manTalkedPreviously01") == True,
+                    Condition.History.Happened("talk").To("nMan"),
                 ),
                 Response("Sup.",'a0'),
                 Response(
@@ -151,7 +151,6 @@ objects = {
                 Response("Bye", "e1"),
                 action=[
                     Action("AddToInventory")("iChicken"),
-                    Action("SetVar")("gotManChicken01", True),
                 ],
             ),
             a2=Dialog(
@@ -165,7 +164,6 @@ objects = {
             ),
             e1=Dialog(
                 "Good bye, then.",
-                action=Action("SetVar")("manTalkedPreviously01", True),
                 end=True,
             ),
         )
@@ -176,6 +174,7 @@ settings = {
     "start":"mPuddle",
     "title":"A Game",
     "author":"Andy Brennan",
+    "enableScopeChecking":True,
     "items":NumeratedList(
         iTem=3,
         iSword=1,
@@ -184,9 +183,7 @@ settings = {
     "objects":objects,
     "commands":[kill, murder, talk, look, go, get, take, drop, inventory, inv, i, save, load, quit, eat],
     "variables":{
-        "manTalkedPreviously01":False,
-        "gotManChicken01":False,
-        "chickenEaten":True,
+
     }
 }
 

@@ -146,12 +146,15 @@ class BaseGame(object):
 
     def CheckScope(self, *ents):
         """Check if an entity is in the current scope (curmap or inventory)"""
-        return all([a.id in self.inventory or a.id in self.GetCurmap().itemlist() for a in ents])
+        ents = self.__toref__(*ents, forcelist=True)
+        return all([r in self.inventory or r in self.GetCurmap().itemlist() for r in ents])
 
     def CheckMapScope(self, *ents):
         """Check if entities are in the curmap scope."""
-        return all([a.id in self.GetCurmap().itemlist() for a in ents])
+        ents = self.__toref__(*ents, forcelist=True)
+        return all([r in self.GetCurmap().itemlist() for r in ents])
 
     def CheckInvScope(self, *ents):
         """Check if entities are in the inventory scope."""
-        return all([a.id in self.inventory for a in ents])
+        ents = self.__toref__(*ents, forcelist=True)
+        return all([r in self.inventory for r in ents])

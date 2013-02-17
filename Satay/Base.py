@@ -319,28 +319,36 @@ class FunctionContainer(object):
     def __init__(self):
         super(FunctionContainer, self).__init__()
 
-    def __toent__(self, *args):
+    def __toent__(self, *args, **kwargs):
         """Resolve EntRefs into the actual entity"""
+        if "forcelist" not in kwargs:
+            forcelist = False
+        else:
+            forcelist = kwargs["forcelist"]
         newargs = []
         for arg in args:
             if isinstance(arg, str):
                 newargs.append(self.game.__objects__[arg])
             else:
                 newargs.append(arg)
-        if len(newargs) > 1:
+        if len(newargs) > 1 or forcelist:
             return newargs
         else:
             return newargs[0]
 
-    def __toref__(self, *args):
+    def __toref__(self, *args, **kwargs):
         """Convert entites into EntRefs."""
+        if "forcelist" not in kwargs:
+            forcelist = False
+        else:
+            forcelist = kwargs["forcelist"]
         newargs = []
         for arg in args:
             if isinstance(arg, EntBase):
                 newargs.append(EntRef(arg.id))
             else:
                 newargs.append(arg)
-        if len(newargs) > 1:
+        if len(newargs) > 1 or forcelist:
             return newargs
         else:
             return newargs[0]

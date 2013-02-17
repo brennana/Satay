@@ -43,6 +43,10 @@ class TextGame(BaseGame.BaseGame):
     def __init__(self, settings, funcCls=TextGameFuncs):
         if not all(["nbase" in w and "descriptors" in w for w in settings["objects"].values()]):
             raise SettingsError("Missing name conventions (nbase and descriptors)!")
+        if "enableScopeChecking" not in settings:
+            self.enableScopeChecking = True
+        else:
+            self.enableScopeChecking = settings["enableScopeChecking"]
         super(TextGame, self).__init__(settings, funcCls)
 
     def __mainloop__(self):
@@ -103,7 +107,7 @@ class TextGame(BaseGame.BaseGame):
         nouns = {k:(v.nbase(),v.descriptors()) for k,v in self.__objects__.items()}
         for arg in args[1:]:
             if arg in [t[0] for t in nouns.values()]:
-                candidates = {}
+                candidates = []
                 #Found a noun! Now backtrack and examine adjectives to the last noun/command
                 # and compare against adjectives in each possible nouns
                 for ID, nountuple in nouns.items():
@@ -114,15 +118,24 @@ class TextGame(BaseGame.BaseGame):
                     if len(adjcmp) > 0:
                         continue
                     else:
-                        candidates[len(adjcmp)] = ID
-                amts = candidates.keys()
+                        candidates.append((len(adjcmp), ID))
+
+                # Remove candidates not in scope if requested
+                if self.enableScopeChecking:
+                    for candidate in candidates:
+                        if not self.CheckScope(candidate[1]):
+                            candidates.remove(candidate)
+
+                amts = [t[0] for t in candidates]
                 amts.sort(reverse=True)
                 if len(amts) <= 0:
                     continue
                 # Ambiguity in user's described noun
                 if amts.count(amts[0]) > 1:
                     raise AmbiguityError("Which one are you talking about?")
-                args[adjp+1:len(usradj)+adjp+2] = [self.__objects__[candidates[amts[0]]]]
+                chosenID = [tup[1] if tup[0] == amts[0] else None for tup in candidates]
+                chosenID.sort(reverse=True)
+                args[adjp+1:len(usradj)+adjp+2] = [self.__objects__[chosenID[0]]]
                 adjp += 1
 
             elif arg in sum([tup[1] for tup in nouns.values()],[]):
