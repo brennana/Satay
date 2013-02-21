@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Satay | An extensible game engine written entirely in Python.</title>
+    
+    <meta name="description" content="Satay | An extensible game engine written entirely in Python." />
+    <meta name="author" content="Andy Brennan" />
+
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
+    <link href="css/satayimpress.css" rel="stylesheet" />
+    
+    <!-- We don't have these yet
+    <link rel="shortcut icon" href="favicon.png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    -->
+</head>
+
+
+<body class="">
+
+
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+</div>
+
+<div id="impress" data-perspective="1000">
+
+    <div id="first" class="step main" data-x="0" data-y="0" data-z="0" data-scale="3">
+        What is Satay?
+    </div>
+
+    <div class="block">
+        <div class="step level one" data-x="0" data-y="0" data-z="-2000" data-scale="2">
+            The Basics
+        </div>
+
+        <div class="step level two" data-x="0" data-y="400" data-z="-2300" data-rotate-x="-90" data-scale="1">
+            Satay is an extensible game engine written entirely in <a href="http://python.org">Python</a>.
+        </div>
+
+        <div class="step level two" data-x="900" data-y="-100" data-z="-2300" data-rotate-x="-90" data-rotate-y="90" data-scale="1">
+            Its very basis makes distinctions between <strong>Commands</strong>, <strong>Gamemodes</strong>, and <strong>Gamemode Functions</strong>.
+        </div>
+
+        <div class="step level three" data-x="1400" data-y="130" data-z="-2600" data-rotate-z="-170" data-scale=".3">
+            <strong>Commands</strong> execute <strong>Gamemode Functions</strong> through user interaction.
+        </div>
+
+        <div class="step level three" data-x="1300" data-y="-200" data-z="-2600" data-rotate-z="-60" data-scale=".3">
+            <strong>Gamemode functions</strong> change a game's state.
+        </div>
+
+        <div class="step level three" data-x="1700" data-y="-310" data-z="-2600" data-rotate-z="20" data-scale=".3">
+            <strong>Gamemodes</strong> define the medium* and elements of a game.
+            <div class="footnote">
+                *e.g. text-based, 2D, 3D, etc.
+            </div>
+        </div>
+
+        <div class="step level three" data-x="1800" data-y="0" data-z="-2600" data-rotate-z="120" data-scale=".3">
+            However, Satay allows for exceptions as we'll see later.
+        </div>
+    </div>
+
+    <div class="block">
+        <div class="step level one" data-x="0" data-y="0" data-z="-4000" data-scale="2">
+            Features
+        </div>
+
+        <div class="step level two" data-x="0" data-y="400" data-z="-4300" data-rotate-x="-90" data-scale="1">
+            <strong>Events</strong> use conditions to execute post-command* <strong>Gamemode Functions</strong>.
+            <div class="footnote">
+                *Those exceptions previously mentioned!
+            </div>
+        </div>
+
+        <div class="step level two" data-x="500" data-y="-100" data-z="-4300" data-rotate-x="-90" data-rotate-y="90" data-scale="1">
+            <strong>History</strong> tracks all commands ever issued* for easy condition creation.
+            <div class="footnote">
+                *Rather than setting variables, just look back in time!
+            </div>
+        </div>
+
+        <div class="step level two" data-x="0" data-y="-500" data-z="-4300" data-rotate-x="-90" data-rotate-y="180" data-scale="1">
+            Premade gamemodes &mdash; only define what makes your game "your game."
+        </div>
+
+        <div class="step level two" data-x="-500" data-y="-60" data-z="-4300" data-rotate-x="-90" data-rotate-y="270" data-scale="1">
+            NPC dialog trees allow for the effortless creation of complex character dialog.
+        </div>
+    </div>
+
+    <div class="block">
+        <div class="step level one" data-x="0" data-y="0" data-z="-6000" data-scale="2">
+            Why Satay?
+        </div>
+
+        <div class="step level two" data-x="0" data-y="400" data-z="-6300" data-rotate-x="-90" data-scale="1">
+            Minimal learning curve.*
+            <div class="footnote">
+                *Satay requires <i>little to no</i> knowledge of Python.
+            </div>
+        </div>
+
+        <div class="step level two" data-x="700" data-y="-100" data-z="-6300" data-rotate-x="-90" data-rotate-y="90" data-scale="1">
+            Beautiful and clean structure.
+        </div>
+
+        <div class="step level three" data-x="1200" data-y="-100" data-z="-6600" data-rotate-z="-90" data-scale=".3">
+            Just look!<br />
+            <img src="img/code.png" />
+        </div>
+
+        <div class="step level two" data-x="0" data-y="-500" data-z="-6300" data-rotate-x="-90" data-rotate-y="180" data-scale="1">
+            Universal application*
+            <div class="footnote">
+                *Although primarily geared towards adventure games, other genres (e.g. RPGs) are also possible!
+            </div>
+        </div>
+
+        <div class="step level two" data-x="-700" data-y="-60" data-z="-6300" data-rotate-x="-90" data-rotate-y="270" data-scale="1">
+            Written in Python, a <i>cross-platform</i> and marvelous language.
+        </div>
+
+        <div class="step level two" data-x="0" data-y="0" data-z="-6600" data-rotate-z="180" data-rotate-x="180" data-scale="1">
+            Includes utilities for compilation*.
+            <div class="footnote">
+                *Share your games with everyone!
+            </div>
+        </div>
+    </div>
+
+    <div class="step main final" data-x="0" data-y="0" data-z="-8000" data-scale="1">
+        Come on, Satay needs some lovin,' so <a href="https://github.com/valdez42/satay">give</a> it a try!
+    </div>
+
+</div>
+
+
+<div class="hint">
+    <p>Use a spacebar or arrow keys to navigate</p>
+</div>
+<script src="js/jquery-1.9.1.min.js"></script>
+
+<script src="js/impress.js"></script>
+<script>impress().init();</script>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>
