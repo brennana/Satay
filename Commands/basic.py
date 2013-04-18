@@ -46,6 +46,7 @@ class go(Command):
             newmap = cmap.d()
         else:
             self.ThrowType()
+        self.OverrideArgs(self.game.__toent__(newmap), cmap, direction)
         self.game.ChgMap(newmap)
         # Print the new map's name and desc
         self.game.Print(self.game.GetCurmap().name())

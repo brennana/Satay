@@ -18,6 +18,12 @@ objects = {
             nMan=1,
         ),
         s="mHeree",
+        events=[
+            Event(
+                Condition.History.Happened("go").With("mPuddle"),
+                Action("Print")("Now leaving the puddle...")
+            ),
+        ],
     ),
 
     "mHeree":Map(

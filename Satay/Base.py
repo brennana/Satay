@@ -24,6 +24,7 @@ class Command(object):
     """Base Command Class -- All commands derive from here."""
     def __init__(self, game, args):
         self.game = game
+        self.override = []
         self.__defer__(*args)
     def __defer__(self, *args):
         """Defer arguments to each function until a suitable match is found"""
@@ -34,6 +35,8 @@ class Command(object):
             except TypeError:
                 continue
             else:
+                if len(self.override) > 0:
+                    args = self.override
                 # Log history
                 self.game.history.AddEntry(self.__class__.__name__, list(args))
                 # Command was successful, evaluate all post-command events
@@ -62,6 +65,8 @@ class Command(object):
         for prop in props:
             if prop not in obj:
                 self.ThrowProperty()
+    def OverrideArgs(self, *args):
+        self.override = args
     funclist = []
     NoSuitableFormMsg = "Do what now?"
     ConjuctionMsg     = "Learn to English, my friend."
