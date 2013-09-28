@@ -82,8 +82,6 @@ settings = {
     "start":"mPuddle",
     "title":"A Web Game",
     "author":"Andy Brennan",
-    "root":"./webroot",
-    "port":8080,
     "items":NumeratedList(
         iTem=3,
         iSword=1,
@@ -98,5 +96,4 @@ settings = {
 
 # Start game immediately
 if __name__ == "__main__":
-    aGame = GameMode(settings)
-    aGame.Run()
+    GameMode.Run("./webroot", settings)

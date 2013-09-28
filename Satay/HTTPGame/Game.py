@@ -26,6 +26,7 @@ from Functions import *
 import BaseHTTPServer
 import mimetypes
 import json
+import uuid
 
 class Map(BaseGame.Map):
     """Class representing map entity (places the player and items inhabit)"""
@@ -59,7 +60,7 @@ class HTTPGameHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             pass
         else:
             return self.create_error(404)
-        
+  
         try:
             if path[1] == "game":
                 ctype = "text/html"
@@ -82,19 +83,27 @@ class HTTPGameHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             elif path[1] == "dataonly":
                 # User requested data only
                 ctype = "application/json"
-                return json.dumps(self.gather_data(additional, {"status":True, "message":None}))
+                game = self.aquire_client_session()
+                return json.dumps(self.gather_data(game, additional, {"status":True, "message":None}))
+            elif path[1] == "session":
+                # Create new session for client
+                ctype = "text/html"
+                session = self.session.CreateSession()
+                response = "<!DOCTYPE html><html><head><title>Session Created</title></head><body></body></html>"
             else:
                 # A command was sent to the server. Execute and send json data.
+                
+                game = self.aquire_client_session()
                 ctype = "application/json"
                 dict_response = {"status":None, "message":None, "gameData":{}}
                 # User requested for data only
                 if path[1] == "data":
                     dict_response["status"] = True
                 else:
-                    for command in self.game.__commands__:
+                    for command in game.__commands__:
                         if command.__name__ == path[1]:
                             try:
-                                command(self.game, path[2:])
+                                command(game, path[2:])
                             except CommandError as ex:
                                 dict_response["status"] = False
                                 dict_response["message"] = ex.message
@@ -108,6 +117,10 @@ class HTTPGameHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         else:
             self.send_response(200)
             self.send_header("Content-type", ctype)
+            try:
+                self.send_header("Set-Cookie", 'satay_session='+session)
+            except NameError:
+                pass
             self.send_header("Content-Length", str(len(response)))
             self.end_headers()
             return response
@@ -116,15 +129,15 @@ class HTTPGameHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         with open(path, "rb") as asset:
             return asset.read()
 
-    def gather_data(self, additional, dict_response={}):
+    def gather_data(self, game, additional, dict_response={}):
         print additional
-        dict_response["gameData"] = self.game.GetData()
+        dict_response["gameData"] = game.GetData()
         if len(additional) > 0:
             for addition in additional:
                 try:
                     addition = addition.split('=')
                     if addition[0] == 'curmap':
-                        obj = self.game.curmap
+                        obj = game.curmap
                     else:
                         obj = addition[0]
                     for selection in addition[1].replace(' ', '').split(","):
@@ -132,7 +145,7 @@ class HTTPGameHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                         prop = prop_full[0]
                         dyn = prop_full[1] if len(prop_full) == 2 else ''
                         dyn_str = '_'+dyn if dyn != '' else ''
-                        dict_response["gameData"][addition[0]+"_"+prop+dyn_str] = getattr(self.game.__objects__[obj], prop)(dyn)
+                        dict_response["gameData"][addition[0]+"_"+prop+dyn_str] = getattr(game.__objects__[obj], prop)(dyn)
                 except (PropertyError, KeyError):
                     dict_response[addition[0]+"_"+prop+dyn_str] = None
         return dict_response
@@ -141,6 +154,20 @@ class HTTPGameHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         for code, literal in self.literals.items():
             path = path.replace(code, literal)
         return path
+
+    def aquire_client_session(self):
+        sessionID = self.parse_cookie(self.headers.getheader('Cookie'))["satay_session"]
+        game = self.session.GetSession(sessionID)
+        print game
+        return game
+
+    def parse_cookie(self, cookies):
+        cookie_dict = {}
+        cookie_list = cookies.split(";")
+        for cookie in cookie_list:
+            pair = cookie.strip().split('=')
+            cookie_dict[pair[0]] = pair[1]
+        return cookie_dict
 
     def create_error(self, error_code):
         try:
@@ -185,25 +212,31 @@ class HTTPGameHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     }
     server_version = "Satay/0.1"
 
+class SessionHandler(object):
+    """Base class for handling an HTTP session"""
+    def __init__(self):
+        super(SessionHandler, self).__init__()
+        self.sessions = {}
+    def GetSession(self, sessionID):
+        return self.sessions[sessionID]
+    def LoadSession(self, sessionID):
+        game = HTTPGame()
+        game.Load(sessionID)
+        self.sessions[sessionID] = game
+    def CreateSession(self):
+        sessionID = self.GenerateID()
+        game = HTTPGame()
+        self.sessions[sessionID] = game
+        return sessionID
+    def GenerateID(self):
+        return uuid.uuid4().hex
+
+
 class HTTPGame(BaseGame.BaseGame):
     """HTTP-based game with Satay."""
-    def __init__(self, settings, funcCls=HTTPGameFuncs, httpHandler=HTTPGameHandler):
-        if "port" not in settings:
-            port = 80
-        else:
-            port = settings["port"]
-
-        if "ip" not in settings:
-            ip = ""
-        else:
-            ip = settings["ip"]
-
-        if "root" in settings:
-            httpHandler.server_root = settings["root"]
-        httpHandler.game = self
-        self.httpd = BaseHTTPServer.HTTPServer((ip, port), httpHandler)
-        self.port = port
-        self.ip = ip
+    def __init__(self, settings=None, funcCls=HTTPGameFuncs):
+        if settings is None:
+            settings = self.gameSettings
         super(HTTPGame, self).__init__(settings, funcCls)
 
     def GetData(self):
@@ -214,12 +247,25 @@ class HTTPGame(BaseGame.BaseGame):
         data["variables"] = self.variables
         return data
 
-    def Run(self):
+    @classmethod
+    def Run(cls, root, settings, ip="localhost", port=80, sessionHandler=SessionHandler, httpHandler=HTTPGameHandler):
         """Run the game."""
         try:
-            self.Print("Serving "+self.title+" by "+self.author+" at port " + str(self.port))
-            self.httpd.serve_forever()
-        except StopGame:
-            self.httpd.shutdown()
+            #httpHandler.game = self
+            HTTPGameHandler.server_root = root
+            HTTPGameHandler.session = sessionHandler()
+            cls.httpd = BaseHTTPServer.HTTPServer((ip, port), httpHandler)
+            cls.port = port
+            cls.ip = ip
+            cls.gameSettings = settings
+            print("Serving "+settings["title"]+" by "+settings["author"]+" at port " + str(port))
+            cls.httpd.serve_forever()
+        except KeyboardInterrupt:
+            cls.httpd.shutdown()
         # Server shutdown
-        self.Print("Server shutdown.")
+        print("Server shutdown.")
+
+    httpd = None
+    port = None
+    ip = None
+    gameSettings = None
